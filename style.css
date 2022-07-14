@@ -12,6 +12,10 @@
     --dark-green: rgb(125, 152, 125);
     --scale-rate: 1.1;
     --font: rgb(41, 36, 36);
+    --scarlet: rgb(231, 108, 108);
+    --dark-scarlet: rgb(192, 83, 83);
+    --dark-grey: rgb(192, 192, 192);
+    --med-grey: rgb(226, 226, 226);
 }
 
 body {
@@ -83,8 +87,8 @@ label[for='read'] {
 }
 
 .btn {
-    width: 150px;
-    padding: 13px 0px;
+    width: 130px;
+    padding: 11px 0px;
     border: none;
     border-radius: 10px;
     font-size: 1rem;
@@ -176,6 +180,7 @@ label[for='read'] {
     border: 2px solid var(--dark-green);
     color: var(--dark-green)
 }
+
 .book-card-copy-div {
     display: flex;
     justify-content: center;
@@ -185,7 +190,81 @@ label[for='read'] {
     height: calc(500px * var(--scale-rate));
     width: calc(325px * var(--scale-rate));
     box-shadow: none;
-    padding: 10px;
+    color: var(--font);
+}
+
+.book-card-info-focus {
+    padding: 0px 0px 10px 0px;
+}
+
+.book-card-info-focus .title {
+    font-size: 2.5rem;
+}
+
+.book-card-info-focus .author {
+    font-weight: 400;
+    font-size: 1.4rem;
+    margin-top: -4px;
+}
+
+.book-card-info-focus .pages {
+    font-size: .8rem;
+    font-weight: 200;
+}
+
+.book-card-copy-info-btns {
+    align-self: center;
+    padding: 25px;
+}
+
+.book-card-copy-btns {
+    display: flex;
+    gap: 20px;
+}
+
+.book-card-copy-btns button {
+    font-size: .8rem;
+}
+
+.read-btn {
+    background: none;
+    border: 2px solid var(--dark-grey);
+    cursor: pointer;
+    color: var(--dark-grey);
+}
+
+.read-btn:hover {
+    background: var(--med-grey);
+}
+
+.read {
+    background: var(--green);
+    border: 2px solid var(--green);
+    color: var(--white);
+}
+
+.read:hover {
+    background: var(--dark-green);
+    border: 2px solid var(--dark-green);
+}
+
+.edit-btn {
+    background: none;
+    border: 2px solid var(--font);
+    color: var(--font);
+}
+
+.edit-btn:hover {
+    background: var(--med-grey);
+}
+
+.del-btn {
+    background: var(--scarlet);
+    color: var(--white);
+}
+
+.del-btn:hover {
+    background: var(--dark-scarlet);
 }
 
 .inactive {
