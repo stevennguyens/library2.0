@@ -28,6 +28,24 @@ const libraryModule = (() => {
                 readBtn.classList.add('read');
             }
         });
+
+        let bookCards = document.querySelectorAll('.book-card');
+
+        bookCards.forEach((bookCard) => {
+            const bookInfo = bookCard.querySelector('.book-card-info');
+            bookCard.addEventListener('mouseover', () => {
+                hideNode(bookInfo);
+            })
+
+            bookCard.addEventListener('mouseout', () => {
+                showNode(bookInfo);
+            })
+            
+            bookCard.addEventListener('click', () => {
+                bookCardClick(bookCard);
+            })
+        })
+
     }
 
     function createBook(book) {
@@ -62,21 +80,31 @@ const libraryModule = (() => {
         return library.filter((book) => book.title.toLowerCase() === title.toLowerCase() && book.author.toLowerCase() === author.toLowerCase())[0];
     }
 
+    function removeBook(book) {
+        library = library.filter((book) => !(getBook(book.title, book.author)));
+    }
+
+    // add book container
+    const addBookContainer = document.querySelector('.book-form-container');
+    // book card focus container
     const bookCardFocusContainer = document.querySelector('.book-card-focus-container');
-    // book
+    // book card copy div
     const bookCardCopyDiv = document.querySelector('.book-card-copy-div');
     // div with book card info and btns
     const bookCardCopyInfoBtns = bookCardCopyDiv.querySelector('.book-card-copy-info-btns');
     // div with btns
     const bookCardCopyBtns = bookCardCopyDiv.querySelector('.book-card-copy-btns');
-    // book card copy info
-    const bookCardCopyInfo = bookCardCopy.querySelector('.book-card-info');
+    
     function bookCardClick(bookCard) {
         hideNode(addBookContainer);
         hideNode(libraryContainer);
         showNode(bookCardFocusContainer);
     
+        // book card copy
         const bookCardCopy = bookCard.cloneNode(true);
+            // book card copy info
+        const bookCardCopyInfo = bookCardCopy.querySelector('.book-card-info');
+
         showNode(bookCardCopyInfo);
         bookCardCopy.classList.add('book-card-focus');
         bookCardCopyInfo.classList.add('book-card-info-focus');
@@ -88,17 +116,32 @@ const libraryModule = (() => {
         readBtn.addEventListener('click', ()=>readBtn.classList.toggle('read'));
     
         const delBtn = document.querySelector('.del-btn');
-        delBtn.addEventListener('click', );
+        delBtn.addEventListener('click', () => {
+            bookCardClose();
+            removeBook(getBook(bookCardCopyInfo.querySelector('.title').innerHTML, bookCardCopyInfo.querySelector('.author').innerHTML))
+            displayBooks();
+        });
+
+        const backBtn = document.querySelector('.back-btn');
+        backBtn.addEventListener('click', () => bookCardClose())
+
+        function bookCardClose() {
+            let bookCard = document.querySelector('.book-card-focus');
+            if (bookCard) bookCard.remove();
+            let bookCardInfo = document.querySelector('.book-card-info-focus');
+            if (bookCardInfo) bookCardInfo.remove();
+            showNode(addBookContainer);
+            showNode(libraryContainer);
+            hideNode(bookCardFocusContainer);
+        }
     }
-    
-    function bookCardClose() {
-        
-    }
-    return {displayBooks, getLibrary, getBook}
+
+    return {displayBooks, getLibrary, getBook, bookCardClick}
 })();
 
 // book form module
 const bookFormModule = (() => {
+    const addBookContainer = document.querySelector('.book-form-container');
     const addBtn = document.querySelector('.add-btn');
     const cancelBtn = document.querySelector('.cancel-btn');
     const bookForm = document.querySelector('.book-form');
@@ -113,13 +156,19 @@ const bookFormModule = (() => {
             let author = document.getElementById('author').value;
             let pages = document.getElementById('pages').value;
             let read = document.getElementById('read').value;
-            if ((title && author && pages) && !(libraryModule.getBook(title, author).length)) {
-                addBook(Book(title, author, pages, read));
-                libraryModule.displayBooks();
-                hideNode(bookForm);
-                hideNode(cancelBtn);
-                toggleBackground(addBookContainer);
-                resetAddForm();
+            if ((title && author && pages)) {
+                let error = document.querySelector('.error-duplicate');
+                if ((libraryModule.getBook(title, author))) {
+                    error.classList.remove("inactive");
+                } else {
+                    addBook(Book(title, author, pages, read));
+                    libraryModule.displayBooks();
+                    hideNode(bookForm);
+                    hideNode(cancelBtn);
+                    toggleBackground(addBookContainer);
+                    resetAddForm();
+                    error.classList.add("inactive");
+                }
             }
         }
     });
@@ -152,35 +201,6 @@ const bookFormModule = (() => {
     return {addBook}
 })();
 
-// function bookCardClick(bookCard) {
-//     hideNode(addBookContainer);
-//     hideNode(libraryContainer);
-//     const bookCardFocusContainer = document.querySelector('.book-card-focus-container');
-//     showNode(bookCardFocusContainer);
-
-//     const bookCardCopyDiv = document.querySelector('.book-card-copy-div');
-//     const bookCardCopy = bookCard.cloneNode(true);
-//     const bookCardCopyInfoBtns = bookCardCopyDiv.querySelector('.book-card-copy-info-btns');
-//     const bookCardCopyBtns = bookCardCopyDiv.querySelector('.book-card-copy-btns');
-//     const bookCardCopyInfo = bookCardCopy.querySelector('.book-card-info');
-//     showNode(bookCardCopyInfo);
-//     bookCardCopy.classList.add('book-card-focus');
-//     bookCardCopyInfo.classList.add('book-card-info-focus');
-//     bookCardCopyDiv.insertBefore(bookCardCopy, bookCardCopyInfoBtns);
-//     bookCardCopyInfoBtns.insertBefore(bookCardCopyInfo, bookCardCopyBtns);
-//     bookCardFocusContainer.append(bookCardCopyDiv);
-
-//     const readBtn = document.querySelector('.read-btn');
-//     readBtn.addEventListener('click', ()=>readBtn.classList.toggle('read'));
-
-//     const delBtn = document.querySelector('.del-btn');
-//     delBtn.addEventListener('click', );
-// }
-
-// function bookCardClose() {
-
-// }
-
 // global functions 
 function hideNode(node) {
     node.classList.add('inactive');
@@ -190,28 +210,8 @@ function showNode(node) {
     node.classList.remove('inactive');
 }
 
-//dom 
-const addBookContainer = document.querySelector('.book-form-container');
+//dom
 let libraryContainer = document.querySelector('.library-container');
 
 bookFormModule.addBook(Book("The Titan's Curse", "Rick Riordan", 200, true));
 libraryModule.displayBooks();
-
-let bookCards = document.querySelectorAll('.book-card');
-
-bookCards.forEach((bookCard) => {
-    const bookInfo = bookCard.querySelector('.book-card-info');
-    bookCard.addEventListener('mouseover', () => {
-        hideNode(bookInfo);
-    })
-
-    bookCard.addEventListener('mouseout', () => {
-        showNode(bookInfo);
-    })
-    
-    bookCard.addEventListener('click', () => {
-        bookCardClick(bookCard);
-    })
-})
-
-console.log((libraryModule.getBook("The Titan's Curse", "rick Riordan").isRead()))

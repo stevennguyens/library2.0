@@ -74,6 +74,11 @@ body {
     margin: 10px 0px;
 }
 
+.error-duplicate {
+    color: var(--scarlet);
+    font-size: .9rem;
+}
+
 label[for='read'] {
     font-size: .8rem;
     font-weight: 200;
@@ -117,6 +122,7 @@ label[for='read'] {
     color: var(--dark-green);
     background: var(--grey);
 }
+
 .library-container {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
