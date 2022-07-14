@@ -18,7 +18,8 @@ const Book = (title, author, pages, read) => {
 // library container module
 const libraryModule = (() => {
     let library = [];
-    
+    const libraryContainer = document.querySelector('.library-container');
+
     function displayBooks() {
         libraryContainer.innerHTML = '';
         library.forEach((book) => {
@@ -211,7 +212,5 @@ function showNode(node) {
 }
 
 //dom
-let libraryContainer = document.querySelector('.library-container');
-
 bookFormModule.addBook(Book("The Titan's Curse", "Rick Riordan", 200, true));
 libraryModule.displayBooks();
