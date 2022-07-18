@@ -2,6 +2,14 @@
 const Book = (title, author, pages, read) => {
     const isRead = () => read === true;
 
+    const toggleRead = () => {
+        if (read) {
+            read = false;
+        } else {
+            read = true;
+        }
+    }
+
     const info = () => {
         let readString = ''
         if (isRead()) {
@@ -12,7 +20,7 @@ const Book = (title, author, pages, read) => {
         return title.concat(' by ', author, ', ', pages, ', ', readString);
     }
 
-    return {title, author, pages, isRead, info};
+    return {title, author, pages, toggleRead, isRead, info};
 }
 
 // library container module
@@ -27,6 +35,8 @@ const libraryModule = (() => {
             const readBtn = document.querySelector('.read-btn');
             if (book.isRead()) {
                 readBtn.classList.add('read');
+            } else {
+                readBtn.classList.remove('read');
             }
         });
 
@@ -78,11 +88,17 @@ const libraryModule = (() => {
     }
 
     function getBook(title, author) {
-        return library.filter((book) => book.title.toLowerCase() === title.toLowerCase() && book.author.toLowerCase() === author.toLowerCase())[0];
+        return library.filter((book) => book.title.toLowerCase() === title.toLowerCase() 
+                                        && book.author.toLowerCase() === author.toLowerCase())[0];
     }
 
-    function removeBook(book) {
-        library = library.filter((book) => !(getBook(book.title, book.author)));
+    function getBookByCard(bookCard) {
+        return library.filter((book) => bookCard.querySelector('.title').innerHTML.toLowerCase() === book.title.toLowerCase() 
+                                        && bookCard.querySelector('.author').innerHTML.toLowerCase() === book.author.toLowerCase())[0];
+    }
+
+    function removeBook(removedBook) {
+        library = library.filter((book) => removedBook !== book);
     }
 
     // add book container
@@ -95,6 +111,37 @@ const libraryModule = (() => {
     const bookCardCopyInfoBtns = bookCardCopyDiv.querySelector('.book-card-copy-info-btns');
     // div with btns
     const bookCardCopyBtns = bookCardCopyDiv.querySelector('.book-card-copy-btns');
+
+    const readBtn = document.querySelector('.read-btn');
+    readBtn.removeEventListener
+    readBtn.addEventListener('click', () => {
+        const bookCardCopyInfo = document.querySelector('.book-card-info-focus');
+        const book = getBookByCard(bookCardCopyInfo);
+        book.toggleRead();  
+        readBtn.classList.toggle('read');
+    });
+
+    const delBtn = document.querySelector('.del-btn');
+    delBtn.addEventListener('click', () => {
+        const bookCardCopyInfo = document.querySelector('.book-card-info-focus');
+        removeBook(getBookByCard(bookCardCopyInfo));
+        bookCardClose();
+        displayBooks();
+    });
+
+    const backBtn = document.querySelector('.back-btn');
+    backBtn.addEventListener('click', () => bookCardClose());
+
+    function bookCardClose() {
+        let bookCard = document.querySelector('.book-card-focus');
+        if (bookCard) bookCard.remove();
+        let bookCardInfo = document.querySelector('.book-card-info-focus');
+        if (bookCardInfo) bookCardInfo.remove();
+        showNode(addBookContainer);
+        showNode(libraryContainer);
+        hideNode(bookCardFocusContainer);
+        displayBooks();
+    }
     
     function bookCardClick(bookCard) {
         hideNode(addBookContainer);
@@ -103,8 +150,11 @@ const libraryModule = (() => {
     
         // book card copy
         const bookCardCopy = bookCard.cloneNode(true);
-            // book card copy info
+        // book card copy info
         const bookCardCopyInfo = bookCardCopy.querySelector('.book-card-info');
+        bookCardCopyInfo.childNodes.forEach((child) => {
+            child.contentEditable='true';
+        });
 
         showNode(bookCardCopyInfo);
         bookCardCopy.classList.add('book-card-focus');
@@ -112,29 +162,6 @@ const libraryModule = (() => {
         bookCardCopyDiv.insertBefore(bookCardCopy, bookCardCopyInfoBtns);
         bookCardCopyInfoBtns.insertBefore(bookCardCopyInfo, bookCardCopyBtns);
         bookCardFocusContainer.append(bookCardCopyDiv);
-    
-        const readBtn = document.querySelector('.read-btn');
-        readBtn.addEventListener('click', ()=>readBtn.classList.toggle('read'));
-    
-        const delBtn = document.querySelector('.del-btn');
-        delBtn.addEventListener('click', () => {
-            bookCardClose();
-            removeBook(getBook(bookCardCopyInfo.querySelector('.title').innerHTML, bookCardCopyInfo.querySelector('.author').innerHTML))
-            displayBooks();
-        });
-
-        const backBtn = document.querySelector('.back-btn');
-        backBtn.addEventListener('click', () => bookCardClose())
-
-        function bookCardClose() {
-            let bookCard = document.querySelector('.book-card-focus');
-            if (bookCard) bookCard.remove();
-            let bookCardInfo = document.querySelector('.book-card-info-focus');
-            if (bookCardInfo) bookCardInfo.remove();
-            showNode(addBookContainer);
-            showNode(libraryContainer);
-            hideNode(bookCardFocusContainer);
-        }
     }
 
     return {displayBooks, getLibrary, getBook, bookCardClick}

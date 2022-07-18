@@ -154,6 +154,24 @@ label[for='read'] {
     padding: 15px;
 }
 
+[contenteditable] {
+    outline: none;
+}
+
+[contenteditable]:focus {
+    border-bottom: 1px solid var(--font);
+    margin-bottom: 10px;
+}
+
+[contenteditable]:focus.title {
+    line-height: 1;
+}
+
+[contenteditable]:focus.pages {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
 .book-card .author {
     font-weight: 500;
     font-size: .9rem;
@@ -220,7 +238,7 @@ label[for='read'] {
 
 .book-card-copy-info-btns {
     align-self: center;
-    padding: 25px;
+    padding-left: 25px;
 }
 
 .book-card-copy-btns {
